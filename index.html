@@ -184,7 +184,7 @@ $("#copy").onclick=async()=>{try{await navigator.clipboard.writeText(payload);$(
 $("#ok").onclick=()=>{if(cur!=null){done[cur]=1;save()}else{$("#fv").value=""}$("#dlg").close();render()};
 $("#fb").onclick=()=>{const v=parseFloat($("#fv").value);if(!(v>0)){$("#fv").focus();return}cur=null;$("#de").textContent="💝";$("#dn").textContent="Contribuição livre";$("#dp").textContent=brl(v);showPix(v)};
 $("#close").onclick=()=>$("#dlg").close();
-function tick(){const d=Math.ceil((new Date(CONFIG.date)-new Date())/864e5);
+function tick(){const t=new Date(CONFIG.date),n=new Date();const d=Math.round((new Date(t.getFullYear(),t.getMonth(),t.getDate())-new Date(n.getFullYear(),n.getMonth(),n.getDate()))/864e5);
  $("#count").textContent=d>1?`Faltam ${d} dias`:d===1?"É amanhã! 💍":d===0?"É hoje! 💍":""}
 (function(){
  const srcs=[...document.querySelectorAll("#gal img")].slice(0,6).map(i=>i.src);
