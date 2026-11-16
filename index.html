@@ -125,6 +125,8 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:1rem}
   <div id="qr" style="width:210px;margin:12px auto;background:#fff;padding:8px;border-radius:10px"></div>
   <div class="pix" id="pix"></div>
   <div class="row"><button class="btn ghost" id="copy">Pix copia e cola</button><button class="btn" id="ok">Já presenteei</button></div>
+  <a class="btn" id="card" target="_blank" rel="noopener" style="display:block;text-decoration:none;text-align:center;margin-top:12px">💳 Pagar com cartão</a>
+  <p id="cardnote" style="color:var(--mute);font-size:.95rem;margin:6px 0 0"></p>
   <button class="btn ghost" style="width:100%;margin-top:8px" id="close">Fechar</button>
 </dialog>
 
@@ -132,7 +134,7 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:1rem}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 // ✏️ EDITE AQUI: seus dados
-const CONFIG={date:"2026-12-19T13:30:00",pixKey:"09590742440",pixName:"Pollyanna e Filipe",pixCity:"BRASIL"};
+const CONFIG={date:"2026-12-19T13:30:00",pixKey:"09590742440",pixName:"Pollyanna e Filipe",pixCity:"BRASIL",cardLink:"https://link.mercadopago.com.br/fvendasfrt"};
 const GIFTS=[
  {n:"Passagens para a lua de mel",p:150,e:"✈️",c:"Lua de mel"},
  {n:"Jantar romântico",p:100,e:"🍷",c:"Lua de mel"},
@@ -151,7 +153,7 @@ let payload="";
 const tl=(id,v)=>id+String(v.length).padStart(2,"0")+v;
 function crc16(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=c&0x8000?((c<<1)^0x1021):(c<<1);c&=0xFFFF}return c.toString(16).toUpperCase().padStart(4,"0")}
 function pixPayload(v){const p=tl("00","01")+tl("01","11")+tl("26",tl("00","br.gov.bcb.pix")+tl("01",CONFIG.pixKey))+tl("52","0000")+tl("53","986")+(v>0?tl("54",v.toFixed(2)):"")+tl("58","BR")+tl("59",CONFIG.pixName.slice(0,25))+tl("60",CONFIG.pixCity.slice(0,15))+tl("62",tl("05","***"))+"6304";return p+crc16(p)}
-function showPix(v){payload=pixPayload(v);try{const q=qrcode(0,"M");q.addData(payload);q.make();$("#qr").innerHTML='<img alt="QR code Pix" style="width:100%;display:block;image-rendering:pixelated" src="'+q.createDataURL(4,0)+'">'}catch(e){$("#qr").textContent=""}$("#pix").textContent="Chave Pix (CPF): 095.905.742-40";$("#copy").textContent="Pix copia e cola";$("#dlg").showModal()}
+function showPix(v){payload=pixPayload(v);try{const q=qrcode(0,"M");q.addData(payload);q.make();$("#qr").innerHTML='<img alt="QR code Pix" style="width:100%;display:block;image-rendering:pixelated" src="'+q.createDataURL(4,0)+'">'}catch(e){$("#qr").textContent=""}$("#pix").textContent="Chave Pix (CPF): 095.905.742-40";$("#copy").textContent="Pix copia e cola";$("#card").href=CONFIG.cardLink;$("#cardnote").textContent="Abre o Mercado Pago. Se pedir, informe o valor de "+brl(v)+".";$("#dlg").showModal()}
 const brl=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 let done={},cur=null,cat="Todos";
 try{done=JSON.parse(localStorage.getItem("done")||"{}")}catch(e){}
