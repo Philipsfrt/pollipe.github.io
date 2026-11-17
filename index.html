@@ -127,6 +127,12 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:1rem}
   <div class="chips" id="chips"></div>
   <div class="grid" id="grid"></div>
   <div class="card free"><div class="e">💝</div><h3>Contribuição livre</h3><p>Prefere escolher o valor? Digite quanto quiser contribuir.</p><input id="fv" type="number" inputmode="decimal" min="1" step="any" placeholder="Valor em R$"><button class="btn" id="fb">Contribuir</button></div>
+<section style="text-align:center;margin-top:56px">
+    <h2>Confirme sua presença</h2>
+    <p class="intro">Será uma alegria ter você com a gente no dia 19/12, às 13h30. Confirme sua presença pelo formulário.</p>
+    <a class="btn" id="rsvp" style="display:inline-block;text-decoration:none;padding:12px 28px;margin:0">💌 Confirmar presença</a>
+    <p id="rsvpn" style="color:var(--mute);font-size:1rem;margin:8px 0 0"></p>
+  </section>
 </main>
 <footer>Feito com carinho · Pollyanna e Filipe</footer>
 
@@ -147,7 +153,7 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:1rem}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 // ✏️ EDITE AQUI: seus dados
-const CONFIG={date:"2026-12-19T13:30:00",pixKey:"09590742440",pixName:"Pollyanna e Filipe",pixCity:"BRASIL",cardLink:"https://link.mercadopago.com.br/fvendasfrt"};
+const CONFIG={date:"2026-12-19T13:30:00",pixKey:"09590742440",pixName:"Pollyanna e Filipe",pixCity:"BRASIL",cardLink:"https://link.mercadopago.com.br/fvendasfrt",rsvpLink:"https://forms.gle/APruqoS8vuCqQPXJ9"};
 const GIFTS=[
  {n:"Passagens para a lua de mel",p:150,e:"✈️",c:"Lua de mel"},
  {n:"Jantar romântico",p:100,e:"🍷",c:"Lua de mel"},
@@ -204,6 +210,7 @@ function tick(){const t=new Date(CONFIG.date),n=new Date();const d=Math.round((n
  };
  $("#mre").onclick=start;start();
 })();
+(function(){const a=$("#rsvp");if(CONFIG.rsvpLink){a.href=CONFIG.rsvpLink;a.target="_blank";a.rel="noopener"}else{a.href="#";a.onclick=e=>{e.preventDefault();$("#rsvpn").textContent="O link de confirmação será adicionado em breve."}}})();
 $("#gal").onclick=e=>{if(e.target.tagName==="IMG"){$("#lbi").src=e.target.src;$("#lb").showModal()}};
 $("#lb").onclick=()=>$("#lb").close();
 render();tick();
