@@ -64,6 +64,8 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .mc.on img{opacity:1}.mc.on b{display:none}
 .mc.ok{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 #mst{text-align:center;color:var(--accent);font-size:1.3rem;font-weight:600;margin:8px 0}
+.ol{font-size:.95rem;color:var(--mute)}
+.ol a{color:var(--accent)}
 footer{text-align:center;color:var(--mute);padding:24px;font-size:1rem}
 </style>
 </head>
@@ -127,7 +129,8 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:1rem}
   <div class="chips" id="chips"></div>
   <div class="grid" id="grid"></div>
   <div class="card free"><div class="e">💝</div><h3>Contribuição livre</h3><p>Prefere escolher o valor? Digite quanto quiser contribuir.</p><input id="fv" type="number" inputmode="decimal" min="1" step="any" placeholder="Valor em R$"><button class="btn" id="fb">Contribuir</button></div>
-<section style="text-align:center;margin-top:56px">
+<div class="card free" id="addr" style="display:none"><div class="e">📦</div><h3>Prefere comprar online?</h3><p>Use os links de cada presente e envie para o nosso endereço. Os valores da lista são cotas, e o item comprado pode ter outro preço.</p><div class="pix" id="addrt"></div><button class="btn ghost" id="addrc">Copiar endereço</button></div>
+  <section style="text-align:center;margin-top:56px">
     <h2>Confirme sua presença</h2>
     <p class="intro">Será uma alegria ter você com a gente no dia 19/12, às 13h30. Confirme sua presença pelo formulário.</p>
     <a class="btn" id="rsvp" style="display:inline-block;text-decoration:none;padding:12px 28px;margin:0">💌 Confirmar presença</a>
@@ -153,19 +156,20 @@ footer{text-align:center;color:var(--mute);padding:24px;font-size:1rem}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 // ✏️ EDITE AQUI: seus dados
-const CONFIG={date:"2026-12-19T13:30:00",pixKey:"09590742440",pixName:"Pollyanna e Filipe",pixCity:"BRASIL",cardLink:"https://link.mercadopago.com.br/fvendasfrt",rsvpLink:"https://forms.gle/APruqoS8vuCqQPXJ9"};
+const CONFIG={date:"2026-12-19T13:30:00",pixKey:"09590742440",pixName:"Pollyanna e Filipe",pixCity:"BRASIL",cardLink:"https://link.mercadopago.com.br/fvendasfrt",rsvpLink:"https://forms.gle/APruqoS8vuCqQPXJ9",address:"Tomé de Souza, 56, ap 702 – Edifício Marina, Savassi, Belo Horizonte – MG, CEP 30140-130"};
 const GIFTS=[
  {n:"Passagens para a lua de mel",p:150,e:"✈️",c:"Lua de mel"},
  {n:"Jantar romântico",p:100,e:"🍷",c:"Lua de mel"},
  {n:"Passeio de barco",p:120,e:"⛵",c:"Lua de mel"},
  {n:"Diária no hotel",p:150,e:"🏨",c:"Lua de mel"},
- {n:"Air fryer",p:100,e:"🍟",c:"Cozinha"},
- {n:"Jogo de panelas",p:150,e:"🍳",c:"Cozinha"},
- {n:"Cafeteira",p:80,e:"☕",c:"Cozinha"},
- {n:"Jogo de pratos",p:70,e:"🍽️",c:"Cozinha"},
- {n:"Jogo de cama",p:90,e:"🛏️",c:"Casa"},
- {n:"Aspirador robô",p:200,e:"🤖",c:"Casa"},
- {n:"Jogo de toalhas",p:60,e:"🛁",c:"Casa"}
+ {n:"Plantas novas para o Filipe",q:"plantas naturais",p:40,e:"🪴",c:"Divertidos"},
+ {n:"Seguro de vida para a Polly enquanto faz pilates",p:50,e:"🤸",c:"Divertidos"},
+ {n:"Cafeteira",q:"cafeteira eletrica",p:80,e:"☕",c:"Cozinha"},
+ {n:"Alexa para o quarto",q:"echo dot alexa",p:100,e:"🔊",c:"Divertidos"},
+ {n:"GTA IV para o casal",q:"gta iv",p:60,e:"🎮",c:"Divertidos"},
+ {n:"Jogo de cama",q:"jogo de cama casal",p:90,e:"🛏️",c:"Casa"},
+ {n:"Aspirador robô",q:"aspirador robo",p:200,e:"🤖",c:"Casa"},
+ {n:"Jogo de toalhas",q:"jogo de toalhas banho",p:60,e:"🛁",c:"Casa"}
 ];
 const $=s=>document.querySelector(s);
 let payload="";
@@ -174,6 +178,7 @@ function crc16(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8
 function pixPayload(v){const p=tl("00","01")+tl("01","11")+tl("26",tl("00","br.gov.bcb.pix")+tl("01",CONFIG.pixKey))+tl("52","0000")+tl("53","986")+(v>0?tl("54",v.toFixed(2)):"")+tl("58","BR")+tl("59",CONFIG.pixName.slice(0,25))+tl("60",CONFIG.pixCity.slice(0,15))+tl("62",tl("05","***"))+"6304";return p+crc16(p)}
 function showPix(v){payload=pixPayload(v);try{const q=qrcode(0,"M");q.addData(payload);q.make();$("#qr").innerHTML='<img alt="QR code Pix" style="width:100%;display:block;image-rendering:pixelated" src="'+q.createDataURL(4,0)+'">'}catch(e){$("#qr").textContent=""}$("#pix").textContent="Chave Pix (CPF): 095.905.742-40";$("#copy").textContent="Pix copia e cola";$("#card").href=CONFIG.cardLink;$("#cardnote").textContent="Abre o Mercado Pago. Se pedir, informe o valor de "+brl(v)+".";$("#dlg").showModal()}
 const brl=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const ml=q=>"https://lista.mercadolivre.com.br/"+q.trim().replace(/\s+/g,"-"),am=q=>"https://www.amazon.com.br/s?k="+encodeURIComponent(q);
 let done={},cur=null,cat="Todos";
 try{done=JSON.parse(localStorage.getItem("done")||"{}")}catch(e){}
 const save=()=>{try{localStorage.setItem("done",JSON.stringify(done))}catch(e){}};
@@ -181,7 +186,7 @@ const cats=["Todos",...new Set(GIFTS.map(g=>g.c))];
 function render(){
  $("#chips").innerHTML=cats.map(c=>`<button class="chip ${c===cat?"on":""}" data-c="${c}">${c}</button>`).join("");
  $("#grid").innerHTML=GIFTS.map((g,i)=>({g,i})).filter(x=>cat==="Todos"||x.g.c===cat).map(({g,i})=>
-  `<div class="card ${done[i]?"done":""}"><div class="e">${g.e}</div><h3>${g.n}</h3><div class="p">${brl(g.p)}</div><button class="btn" data-i="${i}" ${done[i]?"disabled":""}>${done[i]?"Presenteado ✓":"Presentear"}</button></div>`).join("");
+  `<div class="card ${done[i]?"done":""}"><div class="e">${g.e}</div><h3>${g.n}</h3><div class="p">${brl(g.p)}</div><button class="btn" data-i="${i}" ${done[i]?"disabled":""}>${done[i]?"Presenteado ✓":"Presentear"}</button>${g.q?`<div class="ol">Ou compre: <a href="${ml(g.q)}" target="_blank" rel="noopener">Mercado Livre</a> · <a href="${am(g.q)}" target="_blank" rel="noopener">Amazon</a></div>`:""}</div>`).join("");
 }
 $("#chips").onclick=e=>{if(e.target.dataset.c){cat=e.target.dataset.c;render()}};
 $("#grid").onclick=e=>{const i=e.target.dataset.i;if(i==null)return;cur=+i;const g=GIFTS[cur];
@@ -211,6 +216,7 @@ function tick(){const t=new Date(CONFIG.date),n=new Date();const d=Math.round((n
  $("#mre").onclick=start;start();
 })();
 (function(){const a=$("#rsvp");if(CONFIG.rsvpLink){a.href=CONFIG.rsvpLink;a.target="_blank";a.rel="noopener"}else{a.href="#";a.onclick=e=>{e.preventDefault();$("#rsvpn").textContent="O link de confirmação será adicionado em breve."}}})();
+(function(){const a=$("#addr");if(!CONFIG.address)return;$("#addrt").textContent=CONFIG.address;a.style.display="flex";$("#addrc").onclick=async()=>{try{await navigator.clipboard.writeText(CONFIG.address);$("#addrc").textContent="Copiado!"}catch(e){}}})();
 $("#gal").onclick=e=>{if(e.target.tagName==="IMG"){$("#lbi").src=e.target.src;$("#lb").showModal()}};
 $("#lb").onclick=()=>$("#lb").close();
 render();tick();
